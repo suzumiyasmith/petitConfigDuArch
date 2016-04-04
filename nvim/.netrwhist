@@ -1,0 +1,10 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =8
+let g:netrw_dirhist_1='/home/suzumiya/fission-all/front-site'
+let g:netrw_dirhist_2='/home/suzumiya/fission-all/front-site/Handler'
+let g:netrw_dirhist_3='/home/suzumiya/fission-all/front-site/Handler/User'
+let g:netrw_dirhist_4='/home/suzumiya/fission-all/yesod-helpers/Yesod'
+let g:netrw_dirhist_5='/home/suzumiya/fission-all/wx-sdk/WeiXin/PublicPlatform'
+let g:netrw_dirhist_6='/home/suzumiya/fission-all/front-site/templates'
+let g:netrw_dirhist_7='/home/suzumiya/fission-all/center-wxpp/templates/xhy'
+let g:netrw_dirhist_8='/home/suzumiya/fission-all/wx-sdk/templates'

@@ -1,0 +1,1 @@
+/home/suzumiya/SomeConfig/config_files/nvim/init.vim

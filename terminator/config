@@ -1,0 +1,56 @@
+[global_config]
+  borderless = True
+  focus = mouse
+  geometry_hinting = False
+  suppress_multiple_term_dialog = True
+  title_font = Ubuntu Mono 9
+  title_hide_sizetext = True
+  title_use_system_font = True 
+  scrollbar_position = disabled
+[keybindings]
+[layouts]
+  [[default]]
+    [[[child0]]]
+      fullscreen = False
+      last_active_term = bf66f5ba-662a-4e1a-9479-ae58e62ddbeb
+      last_active_window = True
+      maximised = False
+      order = 0
+      parent = ""
+      position = 960:0
+      size = 958, 358
+      title = suzumiya@suzu: ~
+      type = Window
+    [[[terminal1]]]
+      order = 0
+      parent = child0
+      profile = default
+      type = Terminal
+      uuid = bf66f5ba-662a-4e1a-9479-ae58e62ddbeb
+  [[first]]
+    [[[child0]]]
+      fullscreen = False
+      last_active_term = bf66f5ba-662a-4e1a-9479-ae58e62ddbeb
+      last_active_window = True
+      maximised = False
+      order = 0
+      parent = ""
+      position = 960:0
+      size = 958, 358
+      title = suzumiya@suzu: ~
+      type = Window
+    [[[terminal1]]]
+      directory = /home/suzumiya/fission-all
+      order = 0
+      parent = child0
+      profile = default
+      type = Terminal
+      uuid = bf66f5ba-662a-4e1a-9479-ae58e62ddbeb
+[plugins]
+[profiles]
+  [[default]]
+    background_image = /home/suzumiya/Wallpaper/low-poly-wallpaper-for-1680x1050-64-295.jpg
+    background_type = transparent
+    cursor_color = "#ec3648"
+    foreground_color = "#00ff00"
+    palette = "#073642:#dc322f:#859900:#b58900:#268bd2:#d33682:#2aa198:#eee8d5:#002b36:#cb4b16:#586e75:#657b83:#839496:#6c71c4:#93a1a1:#fdf6e3"
