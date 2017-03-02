@@ -4,24 +4,23 @@
 {-# LANGUAGE RankNTypes            #-}
 
 import           XMonad
-import           XMonad.Hooks.ManageDocks
-import           XMonad.Hooks.ManageHelpers
-import           XMonad.Layout.NoBorders
 
+-- Deal with docks and fullScreen
+import           XMonad.Hooks.EwmhDesktops       (ewmh, fullscreenEventHook)
+import           XMonad.Hooks.ManageDocks        (ToggleStruts (..),
+                                                  avoidStruts, docks)
+import           XMonad.Layout.NoBorders         (smartBorders)
+
+-- wallpaper
 import           XMonad.Hooks.WallpaperSetter
 
-import qualified XMonad.StackSet                 as W
 
-import           XMonad.Hooks.ScreenCorners
-
-import           XMonad.Config.Desktop
-import           XMonad.Hooks.EwmhDesktops
-
+-- actions
 import           XMonad.Actions.CycleWS
 import           XMonad.Actions.GridSelect
+import           XMonad.Hooks.ScreenCorners
 
-import           XMonad.Util.EZConfig
-
+-- customised layout
 import           XMonad.Layout.DecorationMadness
 import           XMonad.Layout.Tabbed
 import           XMonad.Util.Themes
@@ -37,17 +36,24 @@ import           XMonad.Layout.Circle
 import           XMonad.Layout.SimpleFloat
 import           XMonad.Layout.WindowArranger
 
-import           Control.Arrow hiding ((<+>),(|||))
+-- helpers
+import           XMonad.Hooks.ManageHelpers
+import qualified XMonad.StackSet                 as W
+import           XMonad.Util.EZConfig
+
+-- control
+import           Control.Arrow                   hiding ((|||))
+import           Data.Monoid
 
 ------------
 -- Basics --
 ------------
 myTerminal = "terminator"
 
-myModMask = mod4Mask -- win
+myModMask = mod4Mask -- super(win)
 
 myBorderColor = "#7FBC71" -- lightGreen
-myNormalBorderColor = "#eeeeee"
+myNormalBorderColor = "#eeeeee" -- white
 myBorderWidth = 4
 
 ---------------
@@ -62,49 +68,51 @@ wallpaperDir = "/home/suzumiya/.local/share/wallpapers/resized/"
 myWorkspaces = show <$> [1..9 :: Int]
 
 -----------------
--- KeySettings --
+-- KeyBindings --
 -----------------
-myKeys = [ (("M-f"), spawn "firefox")  -- Firefox
-         , (("M-x"), spawn "xfce4-taskmanager") -- tasX
-         , (("M-z"), spawn "hyper") -- hyperterm
-         , (("M-p"), spawn "xfce4-popup-whiskermenu") -- windows menu
-         , (("M-S-p"), screenshot "")
-         ]
+myKeys =
+  [ ("M-f", spawn "firefox")  -- Firefox
+  , ("M-x", spawn "xfce4-taskmanager") -- tasX
+  , ("M-z", spawn "hyper") -- hyperterm
+  , ("M-p", spawn "xfce4-popup-whiskermenu") -- windows menu
+  , ("M-S-p", screenshot "")
+  , ("M-b", hideDocks)
+  ]
 
+screenshot opts = spawn $ unwords
+  [ "sleep 0.2;"
+  , "scrot "
+  , opts
+  , "-e 'xdg-open $f'"
+  , "$HOME/Pictures/screenshot-%Y-%m-%d-%H%M%S.png"
+  ]
 
-screenshot opts =
-    spawn $
-    unwords
-        [ "sleep 0.2;"
-        , "scrot "
-        , opts
-        , "-e 'xdg-open $f'"
-        , "$HOME/Pictures/screenshot-%Y-%m-%d-%H%M%S.png"
-        ]
+hideDocks = sendMessage ToggleStruts
 
 -----------------
 -- LayoutHooks --
 -----------------
-myLayoutHook = myNormalLayout 2
-           ||| myMadLayout 7
-           ||| myTabbedLayout 10
-           ||| Full
+myLayoutHook = smartBorders . avoidStruts
+  $ myNormalLayout 2
+  ||| myMadLayout 7
+  ||| myTabbedLayout 10
+  ||| Full
 
-themeOrder :: Int -> Theme
-themeOrder i = theme $ listOfThemes !! i -- length listOfThemes == 15
-
-myNormalLayout = smartBorders . avoidStruts . tallDwmStyle shrinkText . themeOrder
+myNormalLayout =  tallDwmStyle shrinkText . themeOrder
 
 myTabbedLayout = tabbed shrinkText . themeOrder
 
 myMadLayout = mirrorTallDeco shrinkText . themeOrder
 
+themeOrder :: Int -> Theme
+themeOrder i = theme $ listOfThemes !! i -- length listOfThemes == 15
+
 -------------------
 -- WindowActions --
 -------------------
 myHandleEventHook = handleEventHook def
-  <+> fullscreenEventHook
-  <+> screenCornerEventHook
+  <> fullscreenEventHook
+  <> screenCornerEventHook
 
 myStartupHook = do
   addScreenCorner SCUpperRight $ goToSelected def { gs_cellwidth = 250}
@@ -114,16 +122,16 @@ myStartupHook = do
 -- ManageHooks --
 -----------------
 myManageHook :: ManageHook
-myManageHook = composeAll
+myManageHook = mconcat
   [ isFullscreen --> doFullFloat
   , isDialog --> doCenterFloat
   , fmap not isDialog --> doF avoidMaster
   , appManageHooks
-  , manageHook desktopConfig
+  , manageHook def
   ]
 
 appManageHooks :: ManageHook
-appManageHooks = composeAll [ matchAny v --> a | (v,a) <- myActions]
+appManageHooks = mconcat [ matchAny v --> a | (v,a) <- myActions]
   where
     myActions =
       [ ("Xfrun4"                         , doFloat)
@@ -134,9 +142,9 @@ appManageHooks = composeAll [ matchAny v --> a | (v,a) <- myActions]
       , ("Atom"                           , doShift "3")
       , ("Oracle VM VirtualBox Manager"   , doShift "8")
       , ("VirtualBox"                     , doShift "9")
-      , ("gimp-image-window"              , (ask >>= doF . W.sink))
-      , ("gimp-toolbox"                   , (ask >>= doF . W.sink))
-      , ("gimp-dock"                      , (ask >>= doF . W.sink))
+      , ("gimp-image-window"              , ask >>= doF . W.sink)
+      , ("gimp-toolbox"                   , ask >>= doF . W.sink)
+      , ("gimp-dock"                      , ask >>= doF . W.sink)
       , ("gimp-image-new"                 , doFloat)
       , ("gimp-toolbox-color-dialog"      , doFloat)
       , ("gimp-layer-new"                 , doFloat)
@@ -191,7 +199,7 @@ role = stringProperty "WM_WINDOW_ROLE"
 avoidMaster :: W.StackSet i l a s sd -> W.StackSet i l a s sd
 avoidMaster = W.modify' $ \c -> case c of
     W.Stack t [] (r:rs) -> W.Stack t [r] rs
-    otherwise           -> c
+    _                   -> c
 
 
 ----------
@@ -199,7 +207,7 @@ avoidMaster = W.modify' $ \c -> case c of
 ----------
 main = xmonad myXfceConfig
 
-myXfceConfig = docks $ ewmh desktopConfig
+myXfceConfig = docks $ ewmh def
   { terminal = myTerminal
   , modMask  = myModMask
   , focusedBorderColor = myBorderColor
