@@ -71,12 +71,12 @@ myWorkspaces = show <$> [1..9 :: Int]
 -- KeyBindings --
 -----------------
 myKeys =
-  [ ("M-f", spawn "firefox")  -- Firefox
-  , ("M-x", spawn "xfce4-taskmanager") -- tasX
-  , ("M-z", spawn "hyper") -- hyperterm
-  , ("M-p", spawn "xfce4-popup-whiskermenu") -- windows menu
-  , ("M-S-p", screenshot "")
-  , ("M-b", hideDocks)
+  [ ("M-f"   , spawn "firefox")  -- Firefox
+  , ("M-x"   , spawn "xfce4-taskmanager") -- tasX
+  , ("M-z"   , spawn "hyper") -- hyperterm
+  , ("M-p"   , spawn "xfce4-popup-whiskermenu") -- windows menu
+  , ("M-S-p" , screenshot "")
+  , ("M-b"   , hideDocks)
   ]
 
 screenshot opts = spawn $ unwords
