@@ -1,0 +1,39 @@
+#!/usr/bin/env stack
+-- stack --install-ghc runghc --package turtle
+
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE QuasiQuotes #-}
+
+import NeatInterpolation as N
+import Prelude hiding (FilePath)
+import Turtle
+
+main :: IO ()
+main = do
+  filename <- options "creat a new turtle script" parse
+  touch filename
+  writeTextFile filename template1
+  chmod executable filename
+  echo $ head $ textToLines $ format ("File "%fp%" established.") filename
+  exit ExitSuccess
+
+parse :: Parser FilePath
+parse = argPath "fileName" "The name of new file"
+
+template1 = [N.text|
+#!/usr/bin/env stack
+-- stack --install-ghc runghc --package turtle
+
+{-# LANGUAGE OverloadedStrings #-}
+
+import Prelude hiding (FilePath)
+import Turtle
+
+main :: IO ()
+main = do
+  yourName <- options "Say hello for a given name" parse
+  echo $ head $ textToLines $ format ("Hello, "%s%"s!.") yourName
+
+parse :: Parser Text
+parse = argText "name" "Your name to greet"
+|]
